@@ -106,3 +106,51 @@ Connection closed by foreign host.
 
 ```
 ##三、安装php-redis扩展
+**1、下载phpredis扩展**
+```linux
+git clone https://github.com/turtleliangzi/phpredis.git
+```
+**2、编译及安装扩展**
+```linux
+phpize
+```
+如提示该命令找不到，请安装php-devel
+```linux
+yum install php-devel
+```
+然后
+```linux
+./configure --with-php-config=/usr/bin/php-config
+```
+其中php-config目录因环境不同而各有差异
+```linux
+make && make install
+```
+```linux
+make test
+```
+安装完后会在/usr/lib64/php目录下多出redis.so的模块
+**3、配置php环境**
+```linux
+vim /etc/php.ini
+```
+添加如下内容
+```linux
+extension=redis.so
+```
+保存，重启服务器
+```linux
+systemctl restart httpd
+```
+**测试是否配置完成**
+```php
+<?php
+$redis = new Redis();
+$redis->connect('127.0.0.1', 6379);
+$redis->set('data', 'hello');
+echo $redis->get('data');
+?>
+```
+保存，测试 http://www.turtletl.com:8080/redis.php
+如果输出hello，则表示配置完成。
+如果没有，可以用phpinfo()函数查看是否有redis扩展。
